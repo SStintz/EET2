@@ -17,6 +17,11 @@ unsigned long debounce = 50;                          // debounce time in ms
 unsigned long lastDebounce_taster1 = 0;
 unsigned long lastDebounce_taster2 = 0;
 
+bool lastStateTaster1 = LOW;
+bool lastStateTaster2 = LOW;
+
+
+
 void erhoehen_Zundwinkels() {
   delaytime += 100;
   if (delaytime > MAX_ZUNDWINKEL) {
@@ -36,9 +41,6 @@ void onZeroCross() {
 }
 
 void checkTaster() {
- static bool lastStateTaster1 = LOW;
- static bool lastStateTaster2 = LOW;
-
  bool stateTaster1 = digitalRead(taster1);
  bool stateTaster2 = digitalRead(taster2);
 
@@ -67,6 +69,10 @@ void setup() {
 
   // Interrupt bei steigendem Signal (= Nulldurchgang)
   attachInterrupt(digitalPinToInterrupt(interruptPin), onZeroCross, RISING);
+  
+  lastStateTaster1 = digitalRead(taster1);
+  lastStateTaster2 = digitalRead(taster2);
+
 }
 
 void loop() {
