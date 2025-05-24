@@ -16,24 +16,18 @@ unsigned long lastDebounce_taster1 = 0;
 unsigned long lastDebounce_taster2 = 0;
 
 void erhoehen_Zundwinkels() {
-  delaytime += 500;
-  
-  if (delaytime < 0) {
-    delaytime = 0;
-  } 
-  else if (delaytime > HALBEPERIODE_50HZ) {
+    if (delaytime + 500 > HALBEPERIODE_50HZ) {
     delaytime = HALBEPERIODE_50HZ;
+  } else {
+    delaytime += 500;
   }
 }
 
 void reduzieren_Zundwinkels() {
-  delaytime -= 500;
-  
-  if (delaytime < 0) {
+  if (delaytime < 500) {
     delaytime = 0;
-  } 
-  else if (delaytime > HALBEPERIODE_50HZ) {
-    delaytime = HALBEPERIODE_50HZ;
+  } else {
+    delaytime -= 500;
   }
 }
  
