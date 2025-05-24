@@ -1,37 +1,33 @@
 #include <Arduino.h>
 
 //Pinbelegung aus Versuchsstand
-//int nullDurchgang = 0;
+int nullDurchgang = 0;
 const int triacPin = 3;
 const int interruptPin = 9;
-bool zerocrossFlag = false;
-const unsigned long delayAfterZeroCross = 8000;
+
+void zaehleNullDurchgang() {
+    nullDurchgang++;
+}
 
 void setup() {
   // initialisiert Pin 14 (LED1) als output
   pinMode(triacPin, OUTPUT);
-  digitalWrite(triacPin, LOW);
   pinMode(interruptPin, INPUT);
 
   // Interrupt bei steigendem Signal (= Nulldurchgang)
-  attachInterrupt(digitalPinToInterrupt(interruptPin), onZeroCross, RISING);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), zaehleNullDurchgang, RISING);
 }
 
 void loop() {
-   if (zerocrossFlag) { //if es gab Nulldurchgang, züruck auf False setzen
-    zerocrossFlag = false;
+  if (nullDurchgang >= 10) {
+    digitalWrite(triacPin, HIGH);
+    delay(10); // Nur kurz einschalten
+    digitalWrite(triacPin, LOW);
 
-    delayMicroseconds(delayAfterZeroCross);  // Phasenanschnitt
-
-    digitalWrite(triacPin, HIGH);            // Triac zünden
-    delayMicroseconds(10);                    // kurze Pulsdauer
-    digitalWrite(triacPin, LOW);               //Triac bleibt leitend, solange wieder Nulldurchgang
+    nullDurchgang = 0; // Zähler zurücksetzen
   }
  
 }
  
-void onZeroCross() {
-  zerocrossFlag = true;   // Nulldurchgang registrieren
-}
 
 
