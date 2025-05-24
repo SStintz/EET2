@@ -42,18 +42,18 @@ void onZeroCross() {
 }
 
 void checkTaster() {
- static bool lastStateTaster1 = HIGH;
- static bool lastStateTaster2 = HIGH;
+ static bool lastStateTaster1 = LOW;
+ static bool lastStateTaster2 = LOW;
 
  bool stateTaster1 = digitalRead(taster1);
  bool stateTaster2 = digitalRead(taster2);
 
- if (stateTaster1 == LOW && lastStateTaster1 == HIGH && (millis() - lastDebounce_taster1 >= debounce)) {
+ if (stateTaster1 == HIGH && lastStateTaster1 == LOW && (millis() - lastDebounce_taster1 >= debounce)) {
   erhoehen_Zundwinkels();
   lastDebounce_taster1 = millis();
  }
 
- if (stateTaster2 == LOW && lastStateTaster2 == HIGH && (millis() - lastDebounce_taster2 >= debounce)) {
+ if (stateTaster2 == HIGH && lastStateTaster2 == LOW && (millis() - lastDebounce_taster2 >= debounce)) {
   reduzieren_Zundwinkels();
   lastDebounce_taster2 = millis();
  }
@@ -68,8 +68,8 @@ void setup() {
   pinMode(triacPin, OUTPUT);
   digitalWrite(triacPin, LOW);
   pinMode(interruptPin, INPUT);
-  pinMode(taster1, INPUT_PULLUP);
-  pinMode(taster2, INPUT_PULLUP);
+  pinMode(taster1, INPUT_PULLDOWN);
+  pinMode(taster2, INPUT_PULLDOWN);
 
   // Interrupt bei steigendem Signal (= Nulldurchgang)
   attachInterrupt(digitalPinToInterrupt(interruptPin), onZeroCross, RISING);
