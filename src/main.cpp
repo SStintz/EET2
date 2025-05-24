@@ -9,25 +9,25 @@ const int taster2 = 1;  //für heller, d.h Dim down
 
 volatile bool nullDurchgang = false;
 volatile unsigned long delaytime = 2000;
-const unsigned long HALBEPERIODE_50HZ = 10000; // 10ms = 50Hz Halbwelle
+//const unsigned long HALBEPERIODE_50HZ = 10000; // 10ms = 50Hz Halbwelle
+const unsigned long MIN_ZUNDWINKEL = 0;    // minimaler Zündwinkel in Mikrosekunden (z.B. 0.5ms)
+const unsigned long MAX_ZUNDWINKEL = 9000;
 
 unsigned long debounce = 50;                          // debounce time in ms
 unsigned long lastDebounce_taster1 = 0;
 unsigned long lastDebounce_taster2 = 0;
 
 void erhoehen_Zundwinkels() {
-    if (delaytime + 500 > HALBEPERIODE_50HZ) {
-    delaytime = HALBEPERIODE_50HZ;
-  } else {
-    delaytime += 500;
+  delaytime += 100;
+  if (delaytime > MAX_ZUNDWINKEL) {
+    delaytime = MAX_ZUNDWINKEL;
   }
 }
 
 void reduzieren_Zundwinkels() {
-  if (delaytime < 500) {
-    delaytime = 0;
-  } else {
-    delaytime -= 500;
+  delaytime -= 100;
+  if (delaytime < MIN_ZUNDWINKEL) {
+    delaytime = MIN_ZUNDWINKEL;
   }
 }
  
