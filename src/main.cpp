@@ -6,6 +6,7 @@ const int interruptPin = 9;
 const int taster1 = 0; // Dimmer up (dunkler)
 const int taster2 = 1; // Dimmer down (heller)
 
+
 volatile bool nullDurchgang = false;
 volatile unsigned long delaytime = 2000;
 
@@ -19,8 +20,8 @@ unsigned long lastDebounce_taster2 = 0;
 bool lastStateTaster1 = LOW;
 bool lastStateTaster2 = LOW;
 
-bool blink = true;              // Lampe an oder aus (für Blinken)
-unsigned long blinktime = 0;    // Zeit für Blink-Intervall
+bool blink = true;
+unsigned long letzteBlinkZeit = 0;
 
 void erhoehen_Zundwinkels() {
   delaytime += 100;
@@ -37,8 +38,15 @@ void reduzieren_Zundwinkels() {
 }
 
 void onZeroCross() {
-  nullDurchgang = true; // Nulldurchgang erkannt
-}
+
+      delayMicroseconds(delaytime);  // Dimmen mit Zündwinkel
+      digitalWrite(triacPin, blink);  // Triac zünden
+      delayMicroseconds(10);          // Kurzer Impuls
+      digitalWrite(triacPin, LOW);
+    }
+    // else Lampe aus -> kein Triac-Impuls
+  
+
 
 void checkTaster() {
   bool stateTaster1 = digitalRead(taster1);
@@ -70,27 +78,16 @@ void setup() {
   lastStateTaster1 = digitalRead(taster1);
   lastStateTaster2 = digitalRead(taster2);
 
-  blinktime = millis(); // Blink-Timer starten
+  letzteBlinkZeit = millis();  // Blink-Timer starten
 }
 
 void loop() {
-  // Blink-Status jede Sekunde wechseln
-  if (millis() - blinktime >= 1000) {
-    blink = !blink;
-    blinktime = millis();
-  }
-
-  if (nullDurchgang) {
-    nullDurchgang = false;
-
-    if (blink) {
-      delayMicroseconds(delaytime);  // Dimmen mit Zündwinkel
-      digitalWrite(triacPin, HIGH);  // Triac zünden
-      delayMicroseconds(10);          // Kurzer Impuls
-      digitalWrite(triacPin, LOW);
-    }
-    // else Lampe aus -> kein Triac-Impuls
-  }
 
   checkTaster();
+  // Blink-Status jede Sekunde wechseln
+  if (millis() - letzteBlinkZeit >= 1000) {
+    blink = !blink;
+    letzteBlinkZeit = millis();
+  }
+
 }
