@@ -21,7 +21,6 @@ bool lastStateTaster1 = LOW;
 bool lastStateTaster2 = LOW;
 
 
-
 void erhoehen_Zundwinkels() {
   delaytime += 100;
   if (delaytime > MAX_ZUNDWINKEL) {
@@ -37,8 +36,12 @@ void reduzieren_Zundwinkels() {
 }
  
 void onZeroCross() {
-  nullDurchgang = true;   // Nulldurchgang registrieren
-}
+  delayMicroseconds(delaytime);  // Dimmen mit Zündwinkel
+  digitalWrite(triacPin, HIGH);  // Triac zünden
+  delayMicroseconds(10);          // Kurzer Impuls
+  digitalWrite(triacPin, LOW);
+    }
+
 
 void checkTaster() {
  bool stateTaster1 = digitalRead(taster1);
@@ -76,15 +79,7 @@ void setup() {
 }
 
 void loop() {
-   if (nullDurchgang) { //if es gab Nulldurchgang, züruck auf False setzen
-    nullDurchgang = false;
-
-    delayMicroseconds(delaytime);  // Phasenanschnitt
-
-    digitalWrite(triacPin, HIGH);            // Triac zünden
-    delayMicroseconds(10);                    // kurze Pulsdauer
-    digitalWrite(triacPin, LOW);               //Triac bleibt leitend, solange wieder Nulldurchgang
-  }
+   
 
    checkTaster();
  
