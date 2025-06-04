@@ -11,7 +11,7 @@ volatile bool nullDurchgang = false;
 volatile unsigned long delaytime = 2000;
 
 const unsigned long MIN_ZUNDWINKEL = 0;
-const unsigned long MAX_ZUNDWINKEL = 9000;
+const unsigned long MAX_ZUNDWINKEL = 9000; //??????Zuenden nicht mehr moeglich, da Haltestrom unterschritten wird
 
 unsigned long debounce = 50;
 unsigned long lastDebounce_taster1 = 0;
@@ -55,15 +55,21 @@ void checkTaster() {
   if (stateTaster1 == HIGH && lastStateTaster1 == LOW && (millis() - lastDebounce_taster1 >= debounce)) {
     erhoehen_Zundwinkels();
     lastDebounce_taster1 = millis();
+    lastStateTaster1 = HIGH;
+  }
+  else if (stateTaster1 == LOW && lastStateTaster1 == HIGH){
+    lastStateTaster1 = LOW; // ruecksetzen  von lastStateTaster1 so, dass  neu State detektiert werden kann 
   }
 
   if (stateTaster2 == HIGH && lastStateTaster2 == LOW && (millis() - lastDebounce_taster2 >= debounce)) {
     reduzieren_Zundwinkels();
     lastDebounce_taster2 = millis();
+    stateTaster2 = HIGH;
+  }
+  else if (stateTaster2 == LOW && lastStateTaster2 == HIGH ){
+    lastStateTaster2 = LOW;
   }
 
-  lastStateTaster1 = stateTaster1;
-  lastStateTaster2 = stateTaster2;
 }
 
 void setup() {
